@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t write_lock = PTHREAD_MUTEX_INITIALIZER;
+
+int read_count = 0;
+
+void *reader(void *arg) {
+    int id = *((int *)arg);
+    while (1) {
+        // Reader wants to enter
+        pthread_mutex_lock(&mutex);
+        read_count++;
+        if (read_count == 1)
+            pthread_mutex_lock(&write_lock); // First reader locks writer
+        pthread_mutex_unlock(&mutex);
+
+        // Reading section
+        printf("Reader %d is reading...\n", id);
+        sleep(1);
+
+        // Reader leaves
+        pthread_mutex_lock(&mutex);
+        read_count--;
+        if (read_count == 0)
+            pthread_mutex_unlock(&write_lock); // Last reader unlocks writer
+        pthread_mutex_unlock(&mutex);
+
+        sleep(1); // simulate delay before trying to read again
+    }
+    return NULL;
+}
+
+void *writer(void *arg) {
+    int id = *((int *)arg);
+    while (1) {
+        pthread_mutex_lock(&write_lock); // Writer locks directly
+
+        // Writing section
+        printf("Writer %d is writing...\n", id);
+        sleep(2);
+
+        pthread_mutex_unlock(&write_lock);
+
+        sleep(2); // simulate delay before trying to write again
+    }
+    return NULL;
+}
+
+int main() {
+    pthread_t rtid[5], wtid[2];
+    int rids[5] = {1, 2, 3, 4, 5};
+    int wids[2] = {1, 2};
+
+    // Create reader threads
+    for (int i = 0; i < 5; i++) {
+        pthread_create(&rtid[i], NULL, reader, &rids[i]);
+    }
+
+    // Create writer threads
+    for (int i = 0; i < 2; i++) {
+        pthread_create(&wtid[i], NULL, writer, &wids[i]);
+    }
+
+    // Join threads (optional here as they loop infinitely)
+    for (int i = 0; i < 5; i++) pthread_join(rtid[i], NULL);
+    for (int i = 0; i < 2; i++) pthread_join(wtid[i], NULL);
+
+    return 0;
+}
