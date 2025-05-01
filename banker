@@ -9,7 +9,7 @@ printf("\n Enter the number of processes");
 	scanf("%d",&n);
 	printf("\n Enter the number of resources");
 	scanf("%d",&m);
-// get the max from user	
+
 	printf("\n Enter the max of the problem");
 	for(i=0;i<n;i++)
 	{
@@ -18,7 +18,7 @@ printf("\n Enter the number of processes");
 		scanf("%d",&max[i][j]);	
 	}
 	}
-// get the alloc from user	
+
 	printf("\n Enter the allocation of the problem");
 	for(i=0;i<n;i++)
 	{
@@ -27,20 +27,20 @@ printf("\n Enter the number of processes");
 		scanf("%d",&alloc[i][j]);	
 	}
 	}
-//get available from user
+
 printf("Enter the available of problem");
 for(j=0;j<m;j++)
 {
 scanf("%d",&avail[j]);
 }
-// calculate need need=max-alloc	
+
 for (i=0;i<n;i++) {
 		for (j=0;j<m;j++)
 			{
 			need[i][j]=max[i][j]-alloc[i][j];
 			}	
 		   }
-// print the need
+
 printf("\n need calulated is");
  
 for (i=0;i<n;i++) {
@@ -54,7 +54,7 @@ for (i=0;i<n;i++) {
 
 void safety_algo()
 {
-// step 1 initialise finish[i]=false i.e.(0) for all processes and letr work=avail
+
 for (k=0;k<n;k++) { 
 		f[k]=0;
 	}
@@ -64,10 +64,10 @@ for (i=0;i<m;i++) {
 int y=0;
 	for (k=0;k<n;k++) {
 		for (i=0;i<n;i++) {
-			if (f[i]==0) {         // finish condition 
+			if (f[i]==0) {       
 				int flag=0;
 				for (j=0;j<m;j++) {
-					if (need[i][j] > work[j]){   // unsatisfy second condition
+					if (need[i][j] > work[j]){  
 						flag=1;
 						break;
 					}
